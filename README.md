@@ -24,4 +24,3 @@ The search and filter features of the website make it easy for users to find coc
 - **Express.js**
 - **MongoDB**
 - **Mongoose**
-- **Passport.js**
