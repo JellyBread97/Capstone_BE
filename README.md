@@ -15,7 +15,6 @@ The search and filter features of the website make it easy for users to find coc
 - **Favorite** - Allows users to save their favorite cocktails for future reference.
 - **Random** - Provides a random cocktail generator to discover new drinks.
 - **Add Recipe** - Allows users to add their own cocktail recipes to the website.
-- **Authentication** - Provides user authentication to allow users to save their favorite cocktails and add their own recipes.
 
 
 ## Technologies Used
