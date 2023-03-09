@@ -1,0 +1,39 @@
+{
+  "name": "capstone_be",
+  "version": "1.0.0",
+  "description": "The *name* is a website that provides users with access to a wide variety of cocktail recipes. The website is designed to be user-friendly and easy to navigate, with a focus on providing a simple and intuitive interface for finding and discovering new cocktails.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon -r dotenv/config -e -js ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JellyBread97/Capstone_BE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JellyBread97/Capstone_BE/issues"
+  },
+  "homepage": "https://github.com/JellyBread97/Capstone_BE#readme",
+  "dependencies": {
+    "base-64": "^1.0.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "create-http-error": "^1.0.3",
+    "express": "^4.18.2",
+    "express-list-endpoints": "^6.0.0",
+    "express-validator": "^6.15.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.1",
+    "query-to-mongo": "^0.10.2",
+    "uniqid": "^5.4.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.21"
+  }
+}
