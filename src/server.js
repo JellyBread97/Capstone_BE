@@ -10,6 +10,7 @@ import {
   notFoundHandler,
 } from "./errorHandlers.js";
 import usersRouter from "./api/users/index.js";
+import recipesRouter from "./api/recipes/index.js";
 
 const server = express();
 const port = 3001;
@@ -17,6 +18,7 @@ const port = 3001;
 server.use(cors("http://localhost:3000/"));
 server.use(express.json());
 server.use("/users", usersRouter);
+server.use("/recipes", recipesRouter);
 
 server.use(badRequestHandler);
 server.use(forbiddenHandler);

@@ -38,12 +38,24 @@ usersRouter.post("/", async (req, res, next) => {
   }
 });
 
+usersRouter.get("/:userId", async (req, res, next) => {
+  try {
+    const user = await UsersModel.findById(req.params.userId);
+    if (user) {
+      res.send(user);
+    } else {
+      next(createHttpError(404, `User ${user} not found`));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 usersRouter.delete("/:userId", async (req, res, next) => {
   try {
     const deletedUser = await UsersModel.findByIdAndDelete(req.params.userId);
     if (deletedUser) {
-      const message = `Successfully deleted ${deletedUser.name}`;
-      res.status(200).send({ message });
+      res.status(204).send();
     } else {
       next(createHttpError(404, `User with ${req.params.userId} not found`));
     }
