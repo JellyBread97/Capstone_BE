@@ -8,7 +8,7 @@ const userSchema = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    img: {
+    avatar: {
       type: String,
       required: false,
       default:
@@ -20,11 +20,20 @@ const userSchema = new Schema(
   }
 );
 
+userSchema.methods.toJSON = function () {
+  const usersMongoDoc = this;
+  const user = usersMongoDoc.toObject();
+  delete user.password;
+  delete user.__v;
+  delete user.updatedAt;
+  return user;
+};
+
 userSchema.pre("save", async function (next) {
   const currentUser = this;
   if (currentUser.isModified("password")) {
     const plainPW = currentUser.password;
-    const hash = await bcrypt.hash(plainPW, 11);
+    const hash = await bcrypt.hash(plainPW, 10);
     currentUser.password = hash;
   }
   next();

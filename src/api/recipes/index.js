@@ -4,23 +4,40 @@ import listEndpoints from "express-list-endpoints";
 import qtm from "query-to-mongo";
 import RecipesModel from "./model.js";
 import createHttpError from "http-errors";
+import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import { JWTAuthMiddleware } from "../../lib/auth/jwtAuth.js";
 
 const recipesRouter = express.Router();
 
-recipesRouter.get("/", async (req, res, next) => {
+const cloudinaryUploader = multer({
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: {
+      format: "jpeg",
+      folder: "recipes",
+    },
+  }),
+}).single("cocktail");
+
+recipesRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const recipe = await RecipesModel.find();
-    if (recipe) {
-      res.send(recipe);
+    const recipes = await RecipesModel.find()
+      .populate("creator")
+      .populate({ path: "ingredients", populate: { path: "ingredient" } });
+
+    if (recipes) {
+      res.send(recipes);
     } else {
-      next(createHttpError(404, "recipe not found"));
+      next(createHttpError(404, "recipes not found"));
     }
   } catch (error) {
     next(error);
   }
 });
 
-recipesRouter.post("/", async (req, res, next) => {
+recipesRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const { name } = req.body;
     const existingRecipe = await RecipesModel.findOne({ name });
@@ -38,7 +55,33 @@ recipesRouter.post("/", async (req, res, next) => {
   }
 });
 
-recipesRouter.get("/:recipeId", async (req, res, next) => {
+recipesRouter.post(
+  "/:recipeId/image",
+  JWTAuthMiddleware,
+  cloudinaryUploader,
+  async (req, res, next) => {
+    try {
+      const url = req.file.path;
+      const updatedRecipe = await RecipesModel.findByIdAndUpdate(
+        req.params.recipeId,
+        { image: url },
+        { new: true, runValidators: true }
+      );
+      if (updatedRecipe) {
+        res.status(204).send(updatedRecipe);
+      } else {
+        createHttpError(
+          404,
+          `Recipe with id ${req.params.recipeId} is not Found`
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+recipesRouter.get("/:recipeId", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const recipe = await RecipesModel.findById(req.params.recipeId);
     if (recipe) {
@@ -51,24 +94,28 @@ recipesRouter.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-recipesRouter.delete("/:recipeId", async (req, res, next) => {
-  try {
-    const deletedRecipe = await RecipesModel.findByIdAndDelete(
-      req.params.recipeId
-    );
-    if (deletedRecipe) {
-      res.status(204).send();
-    } else {
-      next(
-        createHttpError(404, `Recipe with ${req.params.recipeId} not found`)
+recipesRouter.delete(
+  "/:recipeId",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const deletedRecipe = await RecipesModel.findByIdAndDelete(
+        req.params.recipeId
       );
+      if (deletedRecipe) {
+        res.status(204).send();
+      } else {
+        next(
+          createHttpError(404, `Recipe with ${req.params.recipeId} not found`)
+        );
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
+);
 
-recipesRouter.put("/:recipeId", async (req, res, next) => {
+recipesRouter.put("/:recipeId", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const updatedRecipe = await RecipesModel.findByIdAndUpdate(
       req.params.recipeId,

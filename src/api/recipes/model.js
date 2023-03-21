@@ -5,22 +5,23 @@ const { Schema, model } = mongoose;
 const recipeSchema = new Schema(
   {
     name: { type: String, required: true },
+    creator: { type: Schema.Types.ObjectId, ref: "User" },
     img: {
       type: String,
-      required: false,
       default:
         "https://i.etsystatic.com/20596634/r/il/983960/3922251642/il_fullxfull.3922251642_hqgn.jpg",
     },
-    desc: { type: String, required: false },
+    desc: { type: String },
     ingredients: [
       {
-        list: { type: String, required: true },
+        ingredient: { type: Schema.Types.ObjectId, ref: "Ingredient" },
+        amount: { type: Number },
+        unit: { type: String, enum: ["g", "ml", "cl", "pc", "drop", "dash"] },
       },
     ],
+
     method: {
       type: String,
-      required: false,
-      default: "Shaken, not stirred, add ice, serve with lemon",
     },
   },
   { timestamps: true }
